@@ -1,59 +1,54 @@
 package com.example.synchrony;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.spring.SpringCamelContext;
 import org.modelmapper.ModelMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.task.AsyncTaskExecutor;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 
-@SpringBootApplication(exclude = {RedisRepositoriesAutoConfiguration.class})
-@EnableCaching
-@EnableAsync
+@SpringBootApplication
+
 public class SynchronyApplication  {
+
+@Autowired
 
     public static void main(String[] args) {
         SpringApplication.run(SynchronyApplication.class, args);
     }
 
+//    @Bean
+//    public SecurityFilterChain securityFilterChainAs(HttpSecurity http) throws Exception {
+//        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+//        return http.formLogin().and().build();
+//    }
+@Bean
+public CamelContext camelContext() throws Exception {
+    return new SpringCamelContext();
+}
     @Bean
     public ModelMapper getModelMapper() {
         return new ModelMapper();
     }
-    @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory();
-    }
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(redisConnectionFactory);
-        return template;
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 
-    @Bean("asyncTaskExecutor")
-    public AsyncTaskExecutor getAsyncTaskExecutor(){
-        ThreadPoolTaskExecutor executor= new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(20);
-        executor.setQueueCapacity(500);
-        executor.initialize();
-        return executor;
+//    @Bean
+//    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception{
+//    http.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry.anyRequest().authenticated()).formLogin(Customizer.withDefaults());
+//
+//        return http.build();
     }
 
-
-    }
-
-
+//    public void bindAuthenticationProvider(AuthenticationManagerBuilder authenticationManagerBuilder){
+//        authenticationManagerBuilder.authenticationProvider(customAuthenticationProvider);
+//
+//    }
 
 
 
